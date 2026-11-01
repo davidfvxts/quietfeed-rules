@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 10,
   "updatedAt": "2026-11-01",
   "comment": "Calmgram filter rules. Everything Instagram-specific lives here. Raise 'version' for every published change.",
 
@@ -100,6 +100,13 @@
     "sourceHideSelector": "div:has(> * a[href^='/direct/inbox']):has(> * img[alt$='profile picture']):not(:has(main, article, [role='main']))",
     "fallbackHiddenPaths": "^/direct/t/|^/stories/|^/accounts/|/comments|^/challenge/",
     "fallbackPaths": { "home": "/?variant=following", "direct": "/direct/inbox/", "search": "/explore/search/" }
+  },
+
+  "stories": {
+    "comment": "Story ads are skipped: a sponsored marker in the story header (top headerMaxY px) triggers ArrowRight (verified to advance on mobile web), falling back to a pointer tap on the right side.",
+    "skipAds": true,
+    "headerMaxY": 170,
+    "maxSkipsPer10s": 6
   },
 
   "singleReel": {
