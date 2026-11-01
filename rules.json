@@ -1,0 +1,115 @@
+{
+  "version": 7,
+  "updatedAt": "2026-11-01",
+  "comment": "Calmgram filter rules. Everything Instagram-specific lives here. Raise 'version' for every published change.",
+
+  "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1",
+  "baseURL": "https://www.instagram.com",
+  "paths": {
+    "home": "/?variant=following",
+    "search": "/explore/search/"
+  },
+
+  "routeHosts": ["www.instagram.com", "instagram.com"],
+  "allowedHosts": ["instagram.com", "cdninstagram.com", "facebook.com", "facebook.net", "fbcdn.net", "fbsbx.com"],
+  "blockedSchemes": ["instagram", "itms", "itms-apps", "itms-appss", "fb", "fb-messenger"],
+  "sessionDomains": ["instagram.com", "cdninstagram.com"],
+
+  "routes": [
+    { "name": "direct",   "pattern": "^/direct(/.*)?$",   "action": "allow" },
+    { "name": "stories",  "pattern": "^/stories(/.*)?$",  "action": "allow" },
+    { "name": "accounts", "pattern": "^/accounts(/.*)?$", "action": "allow" },
+
+    { "name": "search",   "pattern": "^/explore/search/?$", "action": "allow" },
+    { "name": "explore",  "pattern": "^/explore(/.*)?$",    "action": "redirect", "target": "/explore/search/" },
+
+    { "name": "reel",     "pattern": "^/(?:[A-Za-z0-9._]+/)?reel/([A-Za-z0-9_-]+)(/.*)?$", "action": "singleReel" },
+    { "name": "reels",    "pattern": "^/reels/([A-Za-z0-9_-]+)/?$", "action": "redirect", "target": "/reel/$1/" },
+    { "name": "reels",    "pattern": "^/reels(/.*)?$",              "action": "redirect", "target": "/?variant=following" },
+    { "name": "profile-reels", "pattern": "^/([A-Za-z0-9._]+)/reels/?$", "action": "redirect", "target": "/$1/" },
+
+    { "name": "feed",     "pattern": "^/$", "query": "(^|&)variant=(following|favorites)(&|$)", "action": "allow" },
+    { "name": "feed",     "pattern": "^/$", "action": "redirect", "target": "/?variant=following" },
+
+    { "name": "post",     "pattern": "^/(?:[A-Za-z0-9._]+/)?p/([A-Za-z0-9_-]+)(/.*)?$", "action": "allow" },
+    { "name": "profile",  "pattern": "^/([A-Za-z0-9._]+)/?$", "action": "allow" }
+  ],
+
+  "collapseSelector": "article, div[style*='padding-top'][style*='padding-bottom'] > *",
+
+  "hideSelectors": [
+    { "id": "F1", "reason": "F1 reels-tab", "selector": "a[href='/reels/'], a[href='https://www.instagram.com/reels/']" },
+    { "id": "F1", "reason": "F1 reels-tab", "selector": "svg[aria-label='Reels']", "closest": "a, [role='button']", "excludeRoutes": ["direct", "reel", "post"] },
+
+    { "id": "F2", "reason": "F2 reel-in-feed", "selector": "a[href*='/reel/']", "closest": "article", "routes": ["feed"], "enabled": false },
+    { "id": "F2", "reason": "F2 video-in-feed", "selector": "video", "closest": "article", "routes": ["feed"], "enabled": false },
+
+    { "id": "F3", "reason": "F3 explore-tab", "selector": "a[href='/explore/'], a[href='https://www.instagram.com/explore/']", "enabled": false, "comment": "Kept visible: in the restyled bottom bar it acts as search (/explore/ redirects to /explore/search/)." },
+    { "id": "F3", "reason": "F3 explore-grid", "selector": "main a[href*='/p/'], main a[href*='/reel/']", "routes": ["search"] },
+
+    { "id": "F5", "reason": "F5 discover-people", "selector": "a[href^='/explore/people']" },
+
+    { "id": "APP", "reason": "open-in-app", "selector": "a[href*='apps.apple.com'], a[href*='itunes.apple.com'], a[href^='instagram://']" }
+  ],
+
+  "textMarkers": {
+    "sponsored": ["Sponsored", "Ad", "Gesponsert", "Anzeige", "Werbung"],
+    "suggested": [
+      "Suggested for you", "Suggested posts", "Suggested reels", "Suggested for You",
+      "Vorgeschlagen für dich", "Vorschläge für dich", "Vorgeschlagene Beiträge", "Vorgeschlagene Reels", "Empfehlungen für dich"
+    ],
+    "caughtUp": [
+      "You're all caught up", "You've seen all new posts",
+      "Du bist auf dem Laufenden", "Du bist auf dem neuesten Stand", "Du hast alle neuen Beiträge gesehen"
+    ],
+    "openInApp": [
+      "Open in app", "Open app", "Open Instagram", "Get the app", "Use the app", "Open in the app",
+      "In App öffnen", "In der App öffnen", "App öffnen", "Instagram öffnen", "App herunterladen", "App verwenden", "App holen"
+    ],
+    "dismissInAppPrompt": ["Not now", "Jetzt nicht", "Nicht jetzt"]
+  },
+
+  "markerSettings": {
+    "maxTextLength": 60,
+    "postSelector": "article",
+    "stopSelector": "main, [role='main']",
+    "maxClimb": 12,
+    "skipRoutes": ["direct", "stories"],
+    "groups": {
+      "sponsored":          { "reason": "F4 sponsored",       "strategy": "post", "count": "ads" },
+      "suggested":          { "reason": "F5 suggested",       "strategy": "block",    "routes": ["feed"] },
+      "caughtUp":           { "reason": "F7 after-caught-up", "strategy": "feedStop", "routes": ["feed"] },
+      "openInApp":          { "reason": "open-in-app",        "strategy": "button" },
+      "dismissInAppPrompt": { "reason": "open-in-app-dialog", "strategy": "dismiss" }
+    }
+  },
+
+  "instagramNav": {
+    "comment": "Instagram's own bottom bar is hidden; Calmgram's pill (Home, Messages, Search, Profile) copies its icons and clicks its links. fallbackPaths are loaded where Instagram shows no bar; fallbackHiddenPaths keep the bottom edge free (chats, stories, login).",
+    "dmLinkSelector": "a[href^='/direct/inbox']",
+    "profileImageSelector": "img[alt$='profile picture'], img[alt$='Profilbild']",
+    "maxClimb": 10,
+    "items": {
+      "home": "a[href='/']",
+      "search": "a[href^='/explore']",
+      "reels": "a[href^='/reels']",
+      "direct": "a[href^='/direct']",
+      "create": "a[href*='/create'], svg[aria-label='New post'], svg[aria-label='Neuer Beitrag']"
+    },
+    "compactAfterScroll": 80,
+    "sourceHideSelector": "div:has(> * a[href^='/direct/inbox']):has(> * img[alt$='profile picture']):not(:has(main, article, [role='main']))",
+    "fallbackHiddenPaths": "^/direct/t/|^/stories/|^/accounts/|/comments|^/challenge/",
+    "fallbackPaths": { "home": "/?variant=following", "direct": "/direct/inbox/", "search": "/explore/search/" }
+  },
+
+  "singleReel": {
+    "rootSelector": "main, [role='main']",
+    "videoSelector": "video",
+    "allowScrollSelector": "[role='dialog']",
+    "blockScroll": true
+  },
+
+  "debug": {
+    "exportBlockedRoutes": ["direct"]
+  }
+}
