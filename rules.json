@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "updatedAt": "2026-11-01",
   "comment": "Calmgram filter rules. Everything Instagram-specific lives here. Raise 'version' for every published change.",
 
@@ -79,7 +79,7 @@
       "sponsored":          { "reason": "F4 sponsored",       "strategy": "post", "count": "ads" },
       "suggested":          { "reason": "F5 suggested",       "strategy": "block",    "routes": ["feed"] },
       "caughtUp":           { "reason": "F7 after-caught-up", "strategy": "feedStop", "routes": ["feed"] },
-      "openInApp":          { "reason": "open-in-app",        "strategy": "button" },
+      "openInApp":          { "reason": "open-in-app",        "strategy": "banner" },
       "dismissInAppPrompt": { "reason": "open-in-app-dialog", "strategy": "dismiss" }
     }
   },
