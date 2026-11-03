@@ -1,5 +1,5 @@
 {
-  "version": 11,
+  "version": 12,
   "updatedAt": "2026-11-01",
   "comment": "Calmgram filter rules. Everything Instagram-specific lives here. Raise 'version' for every published change.",
 
@@ -49,6 +49,7 @@
 
     { "id": "F5", "reason": "F5 discover-people", "selector": "a[href^='/explore/people']" },
 
+    { "id": "UI", "reason": "feed-back-arrow", "selector": "h1 a[href='/'] svg[aria-label='Back'], h1 a[href='/'] svg[aria-label='Zurück']", "closest": "span", "routes": ["feed"], "comment": "Back arrow next to the 'Following' title; it only leads to / (the same feed)." },
     { "id": "APP", "reason": "open-in-app", "selector": "a[href*='apps.apple.com'], a[href*='itunes.apple.com'], a[href^='instagram://']" }
   ],
 
@@ -103,10 +104,20 @@
   },
 
   "stories": {
-    "comment": "Story ads are skipped: a sponsored marker in the story header (top headerMaxY px) triggers ArrowRight (verified to advance on mobile web), falling back to a pointer tap on the right side.",
+    "comment": "Story ads: a sponsored marker (text or aria-label) in the story header (top headerMaxY px) or a call-to-action button in the bottom ctaZone px marks the story as an ad. Mode 'veil' covers it, 'skip' advances via ArrowRight/pointer tap. storyLog keeps a local text log of story headers for diagnosis.",
     "skipAds": true,
     "headerMaxY": 170,
-    "maxSkipsPer10s": 6
+    "maxSkipsPer10s": 6,
+    "ctaZone": 260,
+    "ctaMarkers": ["Learn more", "Shop now", "Install now", "Sign up", "Book now", "Order now", "Get offer", "Apply now", "Contact us", "Watch more", "Get quote", "Listen now", "Play game", "Mehr dazu", "Jetzt einkaufen", "Jetzt installieren", "Registrieren", "Jetzt buchen", "Jetzt bestellen", "Angebot sichern", "Jetzt bewerben", "Kontaktiere uns", "Jetzt anhören"],
+    "storyLog": false
+  },
+
+  "audio": {
+    "comment": "Instagram's own audio toggle on videos (feed: button[aria-label='Toggle audio'] with svg 'Audio is muted'/'Audio is playing'). Calmgram flips it once per new video so playback starts with the sound setting the user chose.",
+    "toggleLabels": ["Toggle audio", "Audio ein-/ausschalten", "Ton ein-/ausschalten"],
+    "mutedLabels": ["Audio is muted", "Audio ist stummgeschaltet", "Ton ist aus"],
+    "playingLabels": ["Audio is playing", "Audio wird abgespielt", "Ton ist an"]
   },
 
   "singleReel": {
